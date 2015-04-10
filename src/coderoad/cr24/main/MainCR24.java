@@ -18,6 +18,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 
 
+
+import coderoad.cr24.exception.JsonException;
 import coderoad.cr24.model.Cases;
 import coderoad.cr24.model.JsonSelenium;
 import coderoad.cr24.model.ListInspector;
@@ -30,63 +32,39 @@ public class MainCR24 {
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
 		// TODO Auto-generated method stub
 		
-		//jsonToObject();
-		
-
-		/*
-		ObjectMapper mapper=new ObjectMapper();
-		ListRecorder recorder=mapper.readValue(new File("C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json"), ListRecorder.class);
-		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(recorder));
-		*/
-		
-		/*
-		ObjectMapper mapper=new ObjectMapper();
-		ListInspector inspector=mapper.readValue(new File("C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json"), ListInspector.class);
-		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(inspector));
-		*/
-		ObjectMapper mapper=new ObjectMapper();
-		JsonSelenium inspector=mapper.readValue(new File("C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json"), JsonSelenium.class);
-		System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(inspector));		
-		
+		String filePath="C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json";
+		convertJsonToJavaObject(filePath);		
 	}
 	
 	
-	public static void jsonToObject(){
-		
-		System.out.println("Calling jsonToObject...");
-		ObjectMapper objectMapper=new ObjectMapper();
-		
-		try{
-			Recorder movimiento=objectMapper.readValue(new File("C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json"), Recorder.class);
-			System.out.println("BaseUrl: "+movimiento.getBaseUrl());
-			System.out.println("command: "+movimiento.getCommand());
-			System.out.println("Target: "+movimiento.getTarget());
-			System.out.println("Value: "+movimiento.getValue());
-			
-			System.out.println("************ JSON **********");
-			System.out.println(movimiento);
-			
-		}catch(JsonGenerationException e){
+	public static void convertJsonToJavaObject(String filePath){
+
+		ObjectMapper mapper=new ObjectMapper();
+		JsonSelenium inspector;
+		try {
+			inspector = mapper.readValue(new File("C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json"), JsonSelenium.class);
+			String jsonString=mapper.writerWithDefaultPrettyPrinter().writeValueAsString(inspector);
+			checkValidJson(jsonString);
+			System.out.println(jsonString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}catch (JsonMappingException e) {
-			e.printStackTrace();
-		}catch (IOException e) {
-			// TODO: handle exception
+		} catch (JsonException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-	}
+
+	}	
 	
 	
-    private void checkValidJson(final String json) {
+    public static void checkValidJson(final String json) throws JsonException{
         try {
             final JsonParser parser = new ObjectMapper().getJsonFactory().createJsonParser(json);
             while (parser.nextToken() != null) {}
         } catch (JsonParseException jpe) {
-            //throw new HubSpotConnectorException("The contactJson contains a JSON malformed", jpe);
-        } catch (IOException ioe) {
-            //throw new HubSpotConnectorException("The contactJson cannot be readed", ioe);
+        	throw new JsonException("The contactJson contains a JSON malformed", jpe);
+        } catch (IOException ioe) {            //
+        	throw new JsonException("The contactJson cannot be readed", ioe);
         }
     }	
 	
