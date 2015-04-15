@@ -21,7 +21,44 @@ public class Target {
 	@JsonProperty("xpath:position")
 	private String xpath_position;
 	
+	@JsonProperty("link")
+	private String link;
+	@JsonProperty("xpath:link")
+	private String xpath_link;
+	@JsonProperty("xpath:href")
+	private String xpath_href;
 	
+	
+	public String getXpath_img() {
+		return xpath_img;
+	}
+	public void setXpath_img(String xpath_img) {
+		this.xpath_img = xpath_img;
+	}
+
+	@JsonProperty("xpath:img")
+	private String xpath_img;
+	
+	
+	
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
+	public String getXpath_link() {
+		return xpath_link;
+	}
+	public void setXpath_link(String xpath_link) {
+		this.xpath_link = xpath_link;
+	}
+	public String getXpath_href() {
+		return xpath_href;
+	}
+	public void setXpath_href(String xpath_href) {
+		this.xpath_href = xpath_href;
+	}
 	public String getId() {
 		return id;
 	}
@@ -71,7 +108,6 @@ public class Target {
 		this.xpath_position = xpath_position;
 	}
 	
-	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -91,8 +127,17 @@ public class Target {
 		builder.append(dom_index);
 		builder.append(", xpath_position=");
 		builder.append(xpath_position);
+		builder.append(", link=");
+		builder.append(link);
+		builder.append(", xpath_link=");
+		builder.append(xpath_link);
+		builder.append(", xpath_href=");
+		builder.append(xpath_href);
 		builder.append("]");
 		return builder.toString();
 	}
+	
+	
+
 	
 }

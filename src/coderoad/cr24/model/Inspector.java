@@ -15,7 +15,18 @@ public class Inspector {
 	@JsonProperty("outerHTMLWithStyle")
 	private String outerHTMLWithStyle;
 	
+	@JsonProperty("computedStyle")
+	private String computedStyle;
 	
+	
+	public String getComputedStyle() {
+		return computedStyle;
+	}
+
+	public void setComputedStyle(String computedStyle) {
+		this.computedStyle = computedStyle;
+	}
+
 	public String getBaseUrl() {
 		return baseUrl;
 	}
