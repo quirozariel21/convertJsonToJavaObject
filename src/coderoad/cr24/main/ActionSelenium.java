@@ -21,6 +21,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -73,11 +74,15 @@ public class ActionSelenium {
 		writeFileJson(jsonString);
 		JsonSelenium jsonSelenium=var.convertJsonToJavaObject(jsonString);			
 		
-		   FirefoxProfile profile = new FirefoxProfile(); 
-		
-		   WebDriver driver= new FirefoxDriver(profile);		
-		   //driver.get("https://www.bankofamerica.com/");
-		   //driver.get("https://www.att.com/");
+		   FirefoxProfile profile = new FirefoxProfile(); 		
+		   WebDriver driver= new FirefoxDriver(profile);
+		   
+		   /*
+		   File fileIE = new File("C:\\Users\\aquiroz\\Pictures\\IEDriverServer.exe");
+		    System.setProperty("webdriver.ie.driver", fileIE.getAbsolutePath());		   
+		   WebDriver driver = new InternetExplorerDriver();
+		   Thread.sleep(10000); 
+		    */
 		   driver.get(jsonSelenium.getBaseUrl());
 		   
 		   
