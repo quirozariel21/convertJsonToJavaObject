@@ -27,7 +27,7 @@ public class ConvertJsonToJavaObject {
 		ObjectMapper mapper=new ObjectMapper();
 		JsonSelenium jsonSelenium=null;
 		try {
-			jsonSelenium = mapper.readValue(new File("C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json"), JsonSelenium.class);
+			jsonSelenium = mapper.readValue(new File("C:\\Users\\mike\\Pictures\\jsonCr24001.json"), JsonSelenium.class);
 			//jsonSelenium = mapper.readValue(filePath,JsonSelenium.class);
 			String jsonString=mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonSelenium);
 			checkValidJson(jsonString);
