@@ -22,6 +22,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -74,15 +75,25 @@ public class ActionSelenium {
 		writeFileJson(jsonString);
 		JsonSelenium jsonSelenium=var.convertJsonToJavaObject(jsonString);			
 		
+		
 		   FirefoxProfile profile = new FirefoxProfile(); 		
 		   WebDriver driver= new FirefoxDriver(profile);
 		   
-		   /*
-		   File fileIE = new File("C:\\Users\\aquiroz\\Pictures\\IEDriverServer.exe");
+
+		/*
+		    File fileIE = new File("C:\\Users\\aquiroz\\Pictures\\IEDriverServer.exe");
 		    System.setProperty("webdriver.ie.driver", fileIE.getAbsolutePath());		   
-		   WebDriver driver = new InternetExplorerDriver();
-		   Thread.sleep(10000); 
-		    */
+			DesiredCapabilities caps = DesiredCapabilities.internetExplorer();
+			System.setProperty("webdriver.ie.driver", fileIE.getAbsolutePath());
+			caps.setCapability("ignoreZoomSetting", true);
+			caps.setCapability("nativeEvents", false);
+			WebDriver driver = new InternetExplorerDriver(caps);
+		*/
+		
+
+		   
+		   //Thread.sleep(10000); 
+		   
 		   driver.get(jsonSelenium.getBaseUrl());
 		   
 		   
@@ -109,7 +120,7 @@ public class ActionSelenium {
 				
 				image.setCommand(command);
 				image.setValue(recorder.getValue());
-				image.setTarget(target.getName());
+				image.setTarget(target.getXpath_position());
 				image.setBaseUrl(recorder.getBaseUrl());
 				
 				
@@ -152,12 +163,14 @@ public class ActionSelenium {
 						File file= createFile("screenshot"+String.valueOf(new Date().getTime()));
 				        System.out.println("FILE PATH:"+file.getAbsolutePath());	
 				        image.setImageUrl(file.getAbsolutePath().replace("C:\\xampp\\htdocs\\cr24_images\\", "http://10.100.0.137:78/cr24_images/"));
-				        
+
+						File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+						FileUtils.copyFile(scrFile, file);	
+						
 				        WebElement elem=driver.findElement(By.xpath(xpath));
 				        elem.click();
 
-						File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-						FileUtils.copyFile(scrFile, file);						
+					
 					}catch(Exception ex){
 						ex.printStackTrace();
 					}
