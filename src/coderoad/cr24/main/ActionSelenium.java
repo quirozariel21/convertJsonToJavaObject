@@ -12,6 +12,7 @@ import java.util.List;
 
 
 import java.io.FileNotFoundException;
+import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
@@ -23,6 +24,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -69,6 +71,24 @@ public class ActionSelenium {
 	
 	public List<Image> run() throws InterruptedException, IOException{
 		
+		/**
+		 * Usando Selenium Grid
+		 */
+		
+		DesiredCapabilities cap=new DesiredCapabilities();
+		
+		cap.setBrowserName("firefox");
+		//cap.setVersion("3.6");
+		cap.setPlatform(org.openqa.selenium.Platform.WINDOWS);
+		cap.setCapability("maxInstances", 3);
+		
+		cap.setBrowserName("chrome");
+		cap.setPlatform(org.openqa.selenium.Platform.WINDOWS);
+		cap.setCapability("maxInstances", 3);
+		
+		
+		
+		
 		int cont=0;
 		
 		ConvertJsonToJavaObject var=new ConvertJsonToJavaObject();
@@ -77,8 +97,9 @@ public class ActionSelenium {
 		
 		
 		   FirefoxProfile profile = new FirefoxProfile(); 		
-		   WebDriver driver= new FirefoxDriver(profile);
+		   //WebDriver driver= new FirefoxDriver(profile);
 		   
+		   WebDriver driver=new RemoteWebDriver(new URL("http://10.100.0.137:4444/wd/hub"),cap);
 
 		/*
 		    File fileIE = new File("C:\\Users\\aquiroz\\Pictures\\IEDriverServer.exe");
