@@ -51,7 +51,7 @@ public class ActionSelenium {
 	private void writeFileJson(String jsonString){
 		try {
 			 
-			File fileDir = new File("C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json");
+			File fileDir = new File("C:\\Users\\mike\\Pictures\\jsonCr24001.json");
 			//FileWriter file = new FileWriter("C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json");
 			Writer out = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(fileDir), "UTF8"));
@@ -183,7 +183,7 @@ public class ActionSelenium {
 						System.out.println("click");
 						File file= createFile("screenshot"+String.valueOf(new Date().getTime()));
 				        System.out.println("FILE PATH:"+file.getAbsolutePath());	
-				        image.setImageUrl(file.getAbsolutePath().replace("C:\\xampp\\htdocs\\cr24_images\\", "http://10.100.0.137:78/cr24_images/"));
+				        image.setImageUrl(file.getAbsolutePath().replace("C:\\xampp\\htdocs\\cr24_images\\", "http://10.100.0.81:78/cr24_images/"));
 
 						File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 						FileUtils.copyFile(scrFile, file);	
@@ -191,7 +191,11 @@ public class ActionSelenium {
 				        WebElement elem=driver.findElement(By.xpath(xpath));
 				        elem.click();
 
-					
+						File fileUlt= createFile("screenshot"+String.valueOf(new Date().getTime()));
+				        System.out.println("FILE PATH:"+file.getAbsolutePath());	
+				        image.setImageUrl(fileUlt.getAbsolutePath().replace("C:\\xampp\\htdocs\\cr24_images\\", "http://10.100.0.81:78/cr24_images/"));
+				        
+				        
 					}catch(Exception ex){
 						ex.printStackTrace();
 					}
