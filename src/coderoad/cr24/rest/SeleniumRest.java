@@ -18,6 +18,7 @@ import org.codehaus.jackson.map.ObjectWriter;
 
 import coderoad.cr24.main.ActionSelenium;
 import coderoad.cr24.model.image.Image;
+import coderoad.cr24.seleniumConnector.SeleniumConnector;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -49,8 +50,12 @@ public class SeleniumRest {
 	public Response getMsg(String jsonString) throws InterruptedException, IOException {
  
  
-		ActionSelenium actionSelenium=new ActionSelenium(jsonString);
-		List<Image>listImage=actionSelenium.run();
+		//ActionSelenium actionSelenium=new ActionSelenium(jsonString);
+		//List<Image>listImage=actionSelenium.run();
+		
+		SeleniumConnector connector=new SeleniumConnector(jsonString);
+		List<Image>listImage=connector.run();
+		
 		
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		String json = ow.writeValueAsString(listImage);

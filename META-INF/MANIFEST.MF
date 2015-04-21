@@ -52,4 +52,5 @@ Export-Package: coderoad.cr24.exception,
  coderoad.cr24.rest,
  coderoad.cr24.selenium,
  selenium.org
-Require-Bundle: myProjectSelenium
+Require-Bundle: myProjectSelenium,
+ myProjectSelenium
