@@ -34,31 +34,32 @@ public class Click implements Actions{
 			Target target=recorder.getTarget();	
 			image.setCommand(command);
 			image.setValue(recorder.getValue());
-			image.setTarget(target.getXpath_position());
+			image.setTarget(target.getXpath_attributes());
 			image.setBaseUrl(recorder.getBaseUrl());							
-			String xpath=target.getXpath_position();
+			String xpath=target.getXpath_attributes();
+			System.out.println("target.getXpath_position() "+target.getXpath_position());
+			System.out.println("target.getXpath_attributes() "+target.getXpath_attributes());
 					
 			File file= createFile("screenshot"+String.valueOf(new Date().getTime()));
 	        System.out.println("FILE PATH:"+file.getAbsolutePath());
 	        image.setImageUrl(file.getAbsolutePath().replace("C:\\xampp\\htdocs\\cr24_images\\", "http://10.100.0.137:78/cr24_images/"));
 	
 	        
-	        JavascriptExecutor js = (JavascriptExecutor) driver;
+	        
+	        
+	        
 			String value=recorder.getValue();
 			WebElement element=driver.findElement(By.xpath(xpath));
-			js.executeScript("arguments[0].setAttribute('style', 'color:red')",element);
+			System.out.println(element.getTagName()+" "+element.getText());
+			//js.executeScript("arguments[0].style.border='10px dotted green'", element);
+			
 			element.click();							
 	
 			
 			
 			
 			
-			for(Inspector inspector:listInspector){
-				//String xpathInspector="/"+inspector.getXpath();
-				String xpathInspector="//html/body/div[6]/section/div[2]/div[1]/div[1]";
-				System.out.println("xpathInspector:"+xpathInspector);
-				// driver.findElement(By.xpath(xpathInspector));
-			}
+			
 			
 			File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);		
 			FileUtils.copyFile(scrFile, file);			

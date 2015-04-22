@@ -50,12 +50,14 @@ public class SeleniumRest {
 	public Response getMsg(String jsonString) throws InterruptedException, IOException {
  
  
-		//ActionSelenium actionSelenium=new ActionSelenium(jsonString);
-		//List<Image>listImage=actionSelenium.run();
+		ActionSelenium actionSelenium=new ActionSelenium(jsonString);
+		List<Image>listImage=actionSelenium.run();
 		
+		
+		/*
 		SeleniumConnector connector=new SeleniumConnector(jsonString);
 		List<Image>listImage=connector.run();
-		
+		*/
 		
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		String json = ow.writeValueAsString(listImage);

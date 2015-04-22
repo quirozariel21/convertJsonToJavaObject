@@ -12,12 +12,20 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import coderoad.cr24.model.Inspector;
 import coderoad.cr24.model.JsonSelenium;
 import coderoad.cr24.model.Recorder;
 import coderoad.cr24.model.image.Image;
@@ -66,8 +74,12 @@ public class SeleniumConnector {
 		
 		   FirefoxProfile profile = new FirefoxProfile(); 		
 		   WebDriver driver= new FirefoxDriver(profile);
-		   		 
-		   driver.get(jsonSelenium.getBaseUrl());
+		   EventFiringWebDriver eDriver=new EventFiringWebDriver(driver);
+			OverrideClass eventListener = new OverrideClass();
+			eDriver.register(eventListener);		
+		   
+		   
+			eDriver.get(jsonSelenium.getBaseUrl());
 		  
 		   
 			File fileIni= createFile("screenshot"+String.valueOf(new Date().getTime()));
@@ -80,6 +92,15 @@ public class SeleniumConnector {
 		System.out.println("nroCases:"+nroCases);
 		List<Image>listImage=new ArrayList<Image>();
 		
+		WebDriverWait myWaitVar=new WebDriverWait(driver, 15);
+		
+		
+		
+		
+		eDriver.get("http://outlook.com");
+		eDriver.navigate().back();
+		
+		eventListener.afterChangeValueOf(null, null);
 		
 		for(int i=0;i<nroCases;i++){
 			List<Recorder>listRecorder=jsonSelenium.getCases().get(i).getListRecorder();			  			
@@ -88,7 +109,20 @@ public class SeleniumConnector {
 				Image image=null;				
 				String command=recorder.getCommand();							
 				if(command.equalsIgnoreCase("type")){					
-					image=Command.TYPE.action(driver, recorder,jsonSelenium.getCases().get(i).getListInspector());					
+					image=Command.TYPE.action(driver, recorder,jsonSelenium.getCases().get(i).getListInspector());
+					
+					
+/*					
+			        for(Inspector inspector:jsonSelenium.getCases().get(i).getListInspector()){
+			        	JavascriptExecutor js = (JavascriptExecutor) driver;
+						String xpathInspector=inspector.getXpath();
+						//String xpathInspector="//html/body/div[4]/div[3]/div/div/div[3]/div/div[2]/div/div/div/a/img";
+						System.out.println("xpathInspector:"+xpathInspector);				
+						WebElement elementInspector=driver.findElement(By.xpath(xpathInspector));
+						js.executeScript("arguments[0].setAttribute('style', arguments[1]);",elementInspector, "color: Red; outline: 10px solid red;");												
+
+					}					
+	*/				
 				}
 				
 				if(command.equalsIgnoreCase("select")){
@@ -100,7 +134,7 @@ public class SeleniumConnector {
 				}
 				
 				if(command.equalsIgnoreCase("click")){
-					image=Command.CLICK.action(driver, recorder,jsonSelenium.getCases().get(i).getListInspector());
+					image=Command.CLICK.action(eDriver, recorder,jsonSelenium.getCases().get(i).getListInspector());
 
 				}			
 				
@@ -109,7 +143,7 @@ public class SeleniumConnector {
 		} // end for				 
 		
 		System.out.println("listImage.size "+listImage.size());
-		driver.close();
+		eDriver.close();
 		return listImage;
 	}
 	
