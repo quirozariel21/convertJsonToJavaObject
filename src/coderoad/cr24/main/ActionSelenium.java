@@ -97,6 +97,11 @@ public class ActionSelenium {
 		   FirefoxProfile profile = new FirefoxProfile(); 		
 		   WebDriver driver= new FirefoxDriver(profile);
 		   
+		   // add listener
+		   EventFiringWebDriver eDriver=new EventFiringWebDriver(driver);
+			OverrideClass eventListener = new OverrideClass();
+			eDriver.register(eventListener);
+		   
 		  // WebDriver driver=new RemoteWebDriver(new URL("http://10.100.0.137:4444/wd/hub"),cap);
 
 		/*
@@ -113,12 +118,12 @@ public class ActionSelenium {
 		   
 		   //Thread.sleep(10000); 
 		   
-		   driver.get(jsonSelenium.getBaseUrl());
+			eDriver.get(jsonSelenium.getBaseUrl());
 		   
 		   
 			File fileIni= createFile("screenshot"+String.valueOf(new Date().getTime()));
 	        System.out.println("FILE PATH:"+fileIni.getAbsolutePath());
-			File scrFileIni = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			File scrFileIni = ((TakesScreenshot)eDriver).getScreenshotAs(OutputType.FILE);
 			FileUtils.copyFile(scrFileIni, fileIni);
 	        
 		
@@ -134,15 +139,12 @@ public class ActionSelenium {
 						
 			System.out.println("CASE "+i+":Recorder:"+listRecorder.size()+" ,Inspector:"+listInspector.size());
 
-			EventFiringWebDriver eDriver=new EventFiringWebDriver(driver);
-			OverrideClass eventListener = new OverrideClass();
-			eDriver.register(eventListener);
 			
 			//Primero evaluar reproducir la inspeccion.
 			for(Inspector inspector:listInspector){
 				String xpathInspector=inspector.getXpath();
-				JavascriptExecutor js = (JavascriptExecutor) driver;
-				WebElement elementInspector=driver.findElement(By.xpath(xpathInspector));
+				JavascriptExecutor js = (JavascriptExecutor) eDriver;
+				WebElement elementInspector=eDriver.findElement(By.xpath(xpathInspector));
 				js.executeScript("arguments[0].setAttribute('style', arguments[1]);",elementInspector, "color: Red; outline: 10px solid red;");
 			}
 			
@@ -174,7 +176,7 @@ public class ActionSelenium {
 					element.sendKeys(value);							
 
 					//Thread.sleep(400);
-					File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+					File scrFile = ((TakesScreenshot)eDriver).getScreenshotAs(OutputType.FILE);
 					FileUtils.copyFile(scrFile, file);
 					
 					try{
@@ -202,10 +204,10 @@ public class ActionSelenium {
 				        System.out.println("FILE PATH:"+file.getAbsolutePath());	
 				        image.setImageUrl(file.getAbsolutePath().replace("C:\\xampp\\htdocs\\cr24_images\\", "http://10.100.0.137:78/cr24_images/"));
 
-						File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+						File scrFile = ((TakesScreenshot)eDriver).getScreenshotAs(OutputType.FILE);
 						FileUtils.copyFile(scrFile, file);	
 						
-				        WebElement elem=driver.findElement(By.xpath(xpath));
+				        WebElement elem=eDriver.findElement(By.xpath(xpath));
 				        Thread.sleep(5000);
 				        elem.click();
 
@@ -225,7 +227,7 @@ public class ActionSelenium {
 		} // end for				 
 		
 		System.out.println("listImage.size "+listImage.size());
-		driver.close();
+		eDriver.close();
 		return listImage;
 	}
 	
