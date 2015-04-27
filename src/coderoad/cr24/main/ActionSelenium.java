@@ -18,6 +18,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
 import com.tierconnect.tcprojects.services.filesystem.services.TCFileSystemService;
@@ -82,24 +84,27 @@ public class ActionSelenium {
 		JsonSelenium jsonSelenium=var.convertJsonToJavaObject(jsonString);			
 		
 		
-		   FirefoxProfile profile = new FirefoxProfile(); 		
-		   WebDriver driver= new FirefoxDriver(profile);		   		   		   
-		   // add listener
-		   eDriver=new EventFiringWebDriver(driver);
-			OverrideClass eventListener = new OverrideClass();
-			eDriver.register(eventListener);
+		
 									
 		  // WebDriver driver=new RemoteWebDriver(new URL("http://10.100.0.137:4444/wd/hub"),cap);
 
-		/*
-		    File fileIE = new File("C:\\Users\\aquiroz\\Pictures\\IEDriverServer.exe");
+		
+		    File fileIE = new File("C:\\Users\\quirozariel21\\Pictures\\IEDriverServer.exe");
 		    System.setProperty("webdriver.ie.driver", fileIE.getAbsolutePath());		   
 			DesiredCapabilities caps = DesiredCapabilities.internetExplorer();
 			System.setProperty("webdriver.ie.driver", fileIE.getAbsolutePath());
 			caps.setCapability("ignoreZoomSetting", true);
 			caps.setCapability("nativeEvents", false);
 			WebDriver driver = new InternetExplorerDriver(caps);
-		*/
+		
+			
+			   //FirefoxProfile profile = new FirefoxProfile(); 		
+			   //WebDriver driver= new FirefoxDriver(profile);		   		   		   
+			   // add listener
+			   eDriver=new EventFiringWebDriver(driver);
+				OverrideClass eventListener = new OverrideClass();
+				eDriver.register(eventListener);
+			
 				   
 		   //Thread.sleep(10000); 
 		   
