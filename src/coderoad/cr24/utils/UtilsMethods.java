@@ -8,15 +8,15 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import com.tierconnect.tcprojects.services.filesystem.services.TCFileSystemService;
+//import com.tierconnect.tcprojects.services.filesystem.services.TCFileSystemService;
 
 public class UtilsMethods {
 
-	public static final String PATH_JSON="C:\\Users\\quirozariel21\\Pictures\\jsonCr24001.json";
+	public static final String PATH_JSON="C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json";
 	public static final String DIR_CR24_IMAGES = "\\cr24_images\\";
 	public static final String PATH_APACHE="C:\\xampp\\htdocs";
-	public static final String PATH_FILE_JSON="C:\\Users\\quirozariel21\\Pictures\\jsonCr24001.json";
-	public static final String IP_APACHE="http://10.100.1.200:78";
+	public static final String PATH_FILE_JSON="C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json";
+	public static final String IP_APACHE="http://10.100.0.137:78";
 	
 	
 	public  static void writeFileJson(String jsonString){
