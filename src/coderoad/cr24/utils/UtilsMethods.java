@@ -8,11 +8,15 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import com.tierconnect.tcprojects.services.filesystem.services.TCFileSystemService;
+
 public class UtilsMethods {
 
-	public static final String PATH_JSON="C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json";
-	public static final String DIR_CR24_IMAGES = "/cr24_images/";
+	public static final String PATH_JSON="C:\\Users\\quirozariel21\\Pictures\\jsonCr24001.json";
+	public static final String DIR_CR24_IMAGES = "\\cr24_images\\";
 	public static final String PATH_APACHE="C:\\xampp\\htdocs";
+	public static final String PATH_FILE_JSON="C:\\Users\\quirozariel21\\Pictures\\jsonCr24001.json";
+	public static final String IP_APACHE="http://10.100.1.200:78";
 	
 	
 	public  static void writeFileJson(String jsonString){
@@ -34,14 +38,14 @@ public class UtilsMethods {
 	
 	
     public static File createFile(String fileName){
-        
+            	  
         try {
             String currentDir= getTmpDir();
             File tmpDir = new File(PATH_APACHE+ DIR_CR24_IMAGES  );
             if(!tmpDir.exists()) {
                 tmpDir.mkdir();
             }
-            System.out.println("tmpDir "+tmpDir);
+           // System.out.println("tmpDir "+tmpDir);
             return new File(tmpDir+"/"+fileName +".jpg");
         }  catch (FileNotFoundException e) {
             e.printStackTrace();

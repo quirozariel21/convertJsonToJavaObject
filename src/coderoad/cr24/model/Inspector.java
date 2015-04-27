@@ -15,15 +15,18 @@ public class Inspector {
 	@JsonProperty("outerHTMLWithStyle")
 	private String outerHTMLWithStyle;
 	
+	@JsonProperty("extra")
+	private Extra extra;
+	
 	@JsonProperty("computedStyle")
-	private String computedStyle;
+	private ComputedStyle computedStyle;
 	
 	
-	public String getComputedStyle() {
+	public ComputedStyle getComputedStyle() {
 		return computedStyle;
 	}
 
-	public void setComputedStyle(String computedStyle) {
+	public void setComputedStyle(ComputedStyle computedStyle) {
 		this.computedStyle = computedStyle;
 	}
 

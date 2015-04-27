@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -17,6 +20,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 
+import com.tierconnect.tcprojects.services.filesystem.services.TCFileSystemService;
+
 import coderoad.cr24.model.Inspector;
 import coderoad.cr24.model.JsonSelenium;
 import coderoad.cr24.model.Recorder;
@@ -24,7 +29,6 @@ import coderoad.cr24.model.Target;
 import coderoad.cr24.model.image.Image;
 import coderoad.cr24.selenium.ConvertJsonToJavaObject;
 import coderoad.cr24.seleniumConnector.OverrideClass;
-
 import static coderoad.cr24.utils.UtilsMethods.*;
 
 public class ActionSelenium {
@@ -33,6 +37,12 @@ public class ActionSelenium {
 	
 	private ConvertJsonToJavaObject convertJsonToJavaObject;
 	private String jsonString;
+	private String baseURL;
+	
+	private EventFiringWebDriver eDriver=null;
+	List<Image>listImage=new ArrayList<Image>();
+	
+	
 	
 	public ActionSelenium(String jsonString){
 		this.jsonString=jsonString;
@@ -73,13 +83,12 @@ public class ActionSelenium {
 		
 		
 		   FirefoxProfile profile = new FirefoxProfile(); 		
-		   WebDriver driver= new FirefoxDriver(profile);
-		   
+		   WebDriver driver= new FirefoxDriver(profile);		   		   		   
 		   // add listener
-		   EventFiringWebDriver eDriver=new EventFiringWebDriver(driver);
+		   eDriver=new EventFiringWebDriver(driver);
 			OverrideClass eventListener = new OverrideClass();
 			eDriver.register(eventListener);
-		   
+									
 		  // WebDriver driver=new RemoteWebDriver(new URL("http://10.100.0.137:4444/wd/hub"),cap);
 
 		/*
@@ -94,102 +103,215 @@ public class ActionSelenium {
 				   
 		   //Thread.sleep(10000); 
 		   
-			eDriver.get(jsonSelenium.getBaseUrl());
-		   		  
+			baseURL=jsonSelenium.getBaseUrl();
+			eDriver.get(baseURL);
+	
+
+			
+			eDriver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+			
 			File fileIni= createFile("screenshot"+String.valueOf(new Date().getTime()));
-	        System.out.println("FILE PATH:"+fileIni.getAbsolutePath());
 			File scrFileIni = ((TakesScreenshot)eDriver).getScreenshotAs(OutputType.FILE);
 			FileUtils.copyFile(scrFileIni, fileIni);
+			
+			System.out.println("FILE PATH:"+fileIni.getAbsolutePath());
+			Image image=new Image();
+			image.setBaseUrl(baseURL);		
+			image.setImageUrl(fileIni.getAbsolutePath().replace(PATH_APACHE+DIR_CR24_IMAGES, IP_APACHE+"/cr24_images/"));	
+	        listImage.add(image);
 	        
-		
+	        /*
+	    	TCFileSystemService fileService=TCFileSystemService.getInstance();
+	    	fileService.createFile(fileIni.getAbsolutePath(), "Comentario");
+	        */
+	        	        		
 		int nroCases=jsonSelenium.getCases().size();
 		System.out.println("nroCases:"+nroCases);
-		
-		List<Image>listImage=new ArrayList<Image>();
-		
-		
+							
 		for(int i=0;i<nroCases;i++){
 			List<Recorder>listRecorder=jsonSelenium.getCases().get(i).getListRecorder();
 			List<Inspector>listInspector=jsonSelenium.getCases().get(i).getListInspector();
-						
-			System.out.println("CASE "+i+":Recorder:"+listRecorder.size()+" ,Inspector:"+listInspector.size());					
+					
+			int nroRecorder=listRecorder.size();
+			int nroInspector=listInspector.size();
+			System.out.println("************************************");
+			System.out.println("NRO. "+i+":Recorder:"+nroRecorder+" ,Inspector:"+nroInspector);					
 			
-			try{
-								
-				//Primero evaluar reproducir la inspeccion.
-				for(Inspector inspector:listInspector){
-					String xpathInspector=inspector.getXpath();
-					JavascriptExecutor js = (JavascriptExecutor) eDriver;
-					WebElement elementInspector=eDriver.findElement(By.xpath(xpathInspector));
-					js.executeScript("arguments[0].setAttribute('style', arguments[1]);",elementInspector, "color: green; outline: 10px solid green;background-color:red;");
-				}
-				
-				// Evaluar recorder
-				for(Recorder recorder:listRecorder){
-					Image image=new Image();
-					
-					System.out.println("************* ");
-					String command=recorder.getCommand();			
-					Target target=recorder.getTarget();
-					
-					image.setCommand(command);
-					image.setValue(recorder.getValue());
-					image.setTarget(target.getXpath_position());
-					image.setBaseUrl(recorder.getBaseUrl());
-									
-					//String xpath=target.getXpath_attributes();						
-					String xpath=target.getXpath_position();
+			try{								
+				baseURL=eDriver.getCurrentUrl();	
+				System.out.println("baseURL:"+baseURL);
 
-					if(command.equalsIgnoreCase("type")){
-						
-						File file= createFile("screenshot"+String.valueOf(new Date().getTime()));
-				        System.out.println("FILE PATH:"+file.getAbsolutePath());
-						image.setImageUrl(file.getAbsolutePath());
-						
-						String value=recorder.getValue();
-						WebElement element=driver.findElement(By.xpath(xpath));
-						element.sendKeys(value);							
-
-						File scrFile = ((TakesScreenshot)eDriver).getScreenshotAs(OutputType.FILE);
-						FileUtils.copyFile(scrFile, file);														
-					}
-									
-					if(command.equalsIgnoreCase("click")){					
-						System.out.println("click");
-						System.out.println("xpath:"+xpath);
-						File file= createFile("screenshot"+String.valueOf(new Date().getTime()));
-				        System.out.println("FILE PATH:"+file.getAbsolutePath());	
-				        image.setImageUrl(file.getAbsolutePath().replace("C:\\xampp\\htdocs\\cr24_images\\", "http://10.100.0.137:78/cr24_images/"));
-
-						File scrFile = ((TakesScreenshot)eDriver).getScreenshotAs(OutputType.FILE);
-						FileUtils.copyFile(scrFile, file);	
-						
-				        WebElement elem=eDriver.findElement(By.xpath(xpath));
-				        Thread.sleep(5000);
-				        elem.click();
-
-						File fileUlt= createFile("screenshot"+String.valueOf(new Date().getTime()));
-				        System.out.println("FILE PATH:"+file.getAbsolutePath());	
-				        image.setImageUrl(fileUlt.getAbsolutePath().replace("C:\\xampp\\htdocs\\cr24_images\\", "http://10.100.0.137:78/cr24_images/"));				        				        	
-					}
-					
-					if(command.equalsIgnoreCase("select")){
-
-						
-					}
-					
-					
-					listImage.add(image);
-				} //endfor	
-				
-			}catch(Exception ex){
-				ex.printStackTrace();									
+				if(nroInspector>0 && nroRecorder==0){
+					System.out.println("CASE A");
+					inspector(listInspector);					
+				}else{
+					if(nroInspector==0 && nroRecorder>0){
+						System.out.println("CASE B");
+						recorder(listRecorder);		
+					}else{
+						String baseUrlRecorder=getBaseUrlRecorder(listRecorder);
+						String baseUrlInspector=getBaseUrlInspector(listInspector);
+						System.out.println("baseUrlRecorder:"+baseUrlRecorder);
+						System.out.println("baseUrlInspector:"+baseUrlInspector);
+						if(nroInspector>0 && nroRecorder>0){
+							if(baseUrlRecorder.equals(baseURL) && !baseUrlInspector.equals(baseURL)){
+								System.out.println("CASE C");
+								recorder(listRecorder);
+								inspector(listInspector);
+							}else{
+								if(!baseUrlRecorder.equals(baseURL) && baseUrlInspector.equals(baseURL)){
+									System.out.println("CASE D");
+									inspector(listInspector);
+									recorder(listRecorder);
+								}else{
+									if(baseUrlRecorder.equals(baseURL) && baseUrlInspector.equals(baseURL)){
+										System.out.println("CASE E");
+										recorder(listRecorder);
+										inspector(listInspector);
+									}									
+								}								
+							}
+						}else{
+						System.out.println("Case not found");		
+						}						
+					}					
+				}				
+			}catch(NoSuchElementException e){
+			//	e.printStackTrace();
+				System.out.println("Exception Elemento no encontrado:"+e.getMessage());
+				//eDriver.quit();
+				eDriver.close();
+				break;
+			}catch (NoSuchWindowException e) {
+				// TODO: handle exception
+				System.out.println("Exeption al cerrar la ventana:"+e.getMessage());
+				break;
+			}catch (Exception ex) {
+				System.out.println("Exeption no identificada:"+ex.getMessage());
+				// TODO: handle exception
+				//eDriver.quit();
+				eDriver.close();
+				break;
 			}							
 		} // end for				 
 		
 		System.out.println("listImage.size "+listImage.size());
 		eDriver.close();
 		return listImage;
-	}		   
+	}
+	
+	
+	
+	public void recorder(List<Recorder>listRecorder) throws IOException, InterruptedException{
+		
+		for(Recorder recorder:listRecorder){
+			
+			Image image=new Image();
+		
+			String command=recorder.getCommand();			
+			Target target=recorder.getTarget();
+			
+			image.setCommand(command);
+			image.setValue(recorder.getValue());
+			image.setTarget(target.getXpath_position());
+			image.setBaseUrl(recorder.getBaseUrl());
+							
+			String xpath=target.getXpath_attributes()==null?target.getXpath_position():target.getXpath_attributes();				
+
+			if(command.equalsIgnoreCase("type")){
+				
+				File file= createFile("screenshot"+String.valueOf(new Date().getTime()));
+				image.setImageUrl(file.getAbsolutePath().replace(PATH_APACHE+DIR_CR24_IMAGES, IP_APACHE+"/cr24_images/"));
+				
+				String value=recorder.getValue();
+				WebElement element=eDriver.findElement(By.xpath(xpath));
+				element.sendKeys(value);							
+
+				File scrFile = ((TakesScreenshot)eDriver).getScreenshotAs(OutputType.FILE);
+				FileUtils.copyFile(scrFile, file);														
+			}
+							
+			if(command.equalsIgnoreCase("click")){					
+				File file= createFile("screenshot"+String.valueOf(new Date().getTime()));		       
+
+				File scrFile = ((TakesScreenshot)eDriver).getScreenshotAs(OutputType.FILE);
+				FileUtils.copyFile(scrFile, file);					
+				image.setImageUrl(file.getAbsolutePath().replace(PATH_APACHE+DIR_CR24_IMAGES, IP_APACHE+"/cr24_images/"));
+				
+		        WebElement elem=eDriver.findElement(By.xpath(xpath));
+		        elem.click();				        				        	
+			}
+			
+			if(command.equalsIgnoreCase("select")){
+
+				
+			}
+			
+			
+			listImage.add(image);
+		} //endfor				
+		
+	}
+	
+	
+  public void inspector(List<Inspector>listInspector) throws IOException{
+	  
+	  // inspection element by element
+		for(Inspector inspector:listInspector){
+			Image image=new Image();
+			String xpathInspector=inspector.getXpath();						
+			JavascriptExecutor js = (JavascriptExecutor) eDriver;
+			WebElement elementInspector=eDriver.findElement(By.xpath(xpathInspector));
+			if(inspector.getType().equalsIgnoreCase("watch")){
+				js.executeScript("arguments[0].setAttribute('style', arguments[1]);",elementInspector, "outline: 5px solid green;");	
+			}else
+				js.executeScript("arguments[0].setAttribute('style', arguments[1]);",elementInspector, "outline: 5px solid red;");
+			
+														
+			image.setBaseUrl(baseURL);
+			image.setTarget(xpathInspector);
+			File file= takeScreenshot();	
+	        image.setImageUrl(file.getAbsolutePath().replace(PATH_APACHE+DIR_CR24_IMAGES, IP_APACHE+"/cr24_images/"));
+	
+	        js.executeScript("arguments[0].setAttribute('style', arguments[1]);",elementInspector, "outline: none;");				
+			baseURL=inspector.getBaseUrl();
+			listImage.add(image);
+		} // end for
+		
+		// inspection all elements
+		Image image=new Image();
+		for(Inspector inspector:listInspector){				
+			String xpathInspector=inspector.getXpath();						
+			JavascriptExecutor js = (JavascriptExecutor) eDriver;
+			WebElement elementInspector=eDriver.findElement(By.xpath(xpathInspector));
+			if(inspector.getType().equalsIgnoreCase("watch")){
+				js.executeScript("arguments[0].setAttribute('style', arguments[1]);",elementInspector, "outline: 5px solid green;");	
+			}else
+				js.executeScript("arguments[0].setAttribute('style', arguments[1]);",elementInspector, "outline: 5px solid red;");													
+			image.setBaseUrl(baseURL);
+		} // end for
+		File file= takeScreenshot();	
+        image.setImageUrl(file.getAbsolutePath().replace(PATH_APACHE+DIR_CR24_IMAGES, IP_APACHE+"/cr24_images/"));
+		listImage.add(image);				
+  }	// end function inspector
+	
+  
+  private File takeScreenshot() throws IOException{
+		File file= createFile("screenshot"+String.valueOf(new Date().getTime()));
+      //  System.out.println("FILE PATH:"+file.getAbsolutePath());	
+        
+		File scrFile = ((TakesScreenshot)eDriver).getScreenshotAs(OutputType.FILE);
+		FileUtils.copyFile(scrFile, file);
+		
+		return file;
+  }
+	
+	private String getBaseUrlRecorder(List<Recorder>listRecorder){
+		return listRecorder.get(0).getBaseUrl();
+	}
+	
+	private String getBaseUrlInspector(List<Inspector>listInspector){
+		return listInspector.get(0).getBaseUrl();
+	}
 	
 }

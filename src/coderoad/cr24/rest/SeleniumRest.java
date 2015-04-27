@@ -48,9 +48,13 @@ public class SeleniumRest {
 	@Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.TEXT_PLAIN)
 	public Response getMsg(String jsonString) throws InterruptedException, IOException {
- 
- 
-		ActionSelenium actionSelenium=new ActionSelenium(jsonString);
+  
+		
+		System.out.println("*****************************");
+		System.out.println("********** ENTRADA **********");
+		System.out.println(jsonString);
+		System.out.println("*****************************");
+		ActionSelenium actionSelenium=new ActionSelenium(jsonString);	
 		List<Image>listImage=actionSelenium.run();
 		
 		

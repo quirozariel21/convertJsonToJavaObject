@@ -25,19 +25,20 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import coderoad.cr24.model.Inspector;
 import coderoad.cr24.model.JsonSelenium;
 import coderoad.cr24.model.Recorder;
 import coderoad.cr24.model.image.Image;
 import coderoad.cr24.selenium.ConvertJsonToJavaObject;
 import coderoad.cr24.seleniumConnector.strategyOperations.Command;
 
+import static coderoad.cr24.utils.UtilsMethods.*;
+
 public class SeleniumConnector {
 
 	private ConvertJsonToJavaObject convertJsonToJavaObject;
 	private String jsonString;
 	
-	private static final String pathFileJson="C:\\Users\\aquiroz\\Pictures\\jsonCr24001.json";
+	
 	
 	public SeleniumConnector(String jsonString){
 		this.jsonString=jsonString;
@@ -51,7 +52,7 @@ public class SeleniumConnector {
 	private void writeFileJson(String jsonString){
 		try {
 			 
-			File fileDir = new File(pathFileJson);
+			File fileDir = new File(PATH_FILE_JSON);
 			Writer out = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(fileDir), "UTF8"));			
 			out.append(jsonString);
@@ -83,7 +84,7 @@ public class SeleniumConnector {
 		  
 		   
 			File fileIni= createFile("screenshot"+String.valueOf(new Date().getTime()));
-	        System.out.println("FILE PATH:"+fileIni.getAbsolutePath());
+	        //System.out.println("FILE PATH:"+fileIni.getAbsolutePath());
 			File scrFileIni = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 			FileUtils.copyFile(scrFileIni, fileIni);
 	        
